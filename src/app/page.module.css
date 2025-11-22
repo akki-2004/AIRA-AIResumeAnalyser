@@ -1,0 +1,125 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 4rem 2rem;
+  background: radial-gradient(circle at 50% 0%, hsl(var(--primary) / 0.1), transparent 70%);
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 4rem;
+  max-width: 800px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  border: 1px solid hsl(var(--primary) / 0.2);
+}
+
+.title {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(to right, hsl(var(--foreground)), hsl(var(--muted-foreground)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.6;
+}
+
+.optionsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 4rem;
+}
+
+.optionCard {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 2rem;
+  transition: transform 0.2s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.optionCard:hover {
+  transform: translateY(-4px);
+  border-color: hsl(var(--primary) / 0.5);
+}
+
+.optionHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.optionHeader h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.optionCard p {
+  color: hsl(var(--muted-foreground));
+  margin-bottom: 2rem;
+  flex: 1;
+}
+
+.uploadWrapper {
+  margin-top: auto;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.featureCard {
+  background: hsl(var(--card) / 0.5);
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 2rem;
+  transition: background 0.2s;
+}
+
+.featureCard:hover {
+  background: hsl(var(--card));
+}
+
+.featureIcon {
+  color: hsl(var(--primary));
+  margin-bottom: 1.5rem;
+}
+
+.featureTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.featureDesc {
+  color: hsl(var(--muted-foreground));
+  line-height: 1.6;
+}

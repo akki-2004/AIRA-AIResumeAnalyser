@@ -1,0 +1,264 @@
+.container {
+    min-height: 100vh;
+    background: hsl(var(--background));
+}
+
+.inputWrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: hsl(var(--muted-foreground));
+    margin-bottom: 1rem;
+    text-decoration: none;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: hsl(var(--muted-foreground));
+    font-size: 1.1rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    padding: 1.5rem;
+}
+
+.cardTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.textarea {
+    width: 100%;
+    height: 300px;
+    padding: 1rem;
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    resize: none;
+    font-family: inherit;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.textarea:focus {
+    outline: none;
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
+}
+
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid hsl(var(--muted));
+    border-top-color: hsl(var(--primary));
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Split Layout (Reused from Analyze Page but scoped here) */
+.splitLayout {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+.leftPanel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+}
+
+.rightPanel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: hsl(var(--background));
+    min-width: 500px;
+    overflow-y: auto;
+}
+
+.panelHeader {
+    height: 60px;
+    border-bottom: 1px solid hsl(var(--border));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    background: hsl(var(--card));
+}
+
+.panelTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.backButton {
+    background: transparent;
+    border: none;
+    color: hsl(var(--muted-foreground));
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.viewerContainer {
+    flex: 1;
+    overflow: hidden;
+}
+
+.resultsContent {
+    padding: 2rem;
+}
+
+.scoreCard {
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.1));
+    border: 1px solid hsl(var(--primary) / 0.2);
+    border-radius: var(--radius);
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.scoreCircle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: hsl(var(--background));
+    border: 4px solid hsl(var(--primary));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.scoreValue {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: hsl(var(--primary));
+    line-height: 1;
+}
+
+.scoreLabel {
+    font-size: 0.65rem;
+    color: hsl(var(--muted-foreground));
+    text-transform: uppercase;
+}
+
+.scoreTitle {
+    font-size: 1.25rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.scoreDesc {
+    color: hsl(var(--muted-foreground));
+    margin: 0;
+}
+
+.section {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tagMissing {
+    background: hsl(var(--destructive) / 0.1);
+    color: hsl(var(--destructive));
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    border: 1px solid hsl(var(--destructive) / 0.2);
+}
+
+.tagMatched {
+    background: hsl(var(--success) / 0.1);
+    color: hsl(var(--success));
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    border: 1px solid hsl(var(--success) / 0.2);
+}
+
+.tagSuccess {
+    color: hsl(var(--success));
+    font-weight: 500;
+}
+
+.suggestionList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.suggestionItem {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
