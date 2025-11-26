@@ -26,6 +26,10 @@ export interface AnalysisResult {
     };
     sections: SectionAnalysis[];
     suggestions: string[];
+    role?: {
+        predicted: string;
+        distribution: Record<string, number>;
+    };
 }
 
 export async function analyzeResume(text: string): Promise<AnalysisResult> {
@@ -88,23 +92,53 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
         projects: ["projects", "portfolio", "personal projects"]
     };
 
-    const extractSection = (targetKeywords: string[]): string => {
-        const lower = text.toLowerCase();
-        const startIndices = targetKeywords.map(k => lower.indexOf(k)).filter(i => i !== -1);
-        if (startIndices.length === 0) return "";
-        const start = Math.min(...startIndices);
+    // Robust Section Parsing Logic
+    const sectionPositions: { name: string; index: number }[] = [];
 
-        const allKeywords = Object.values(sectionKeywords).flat();
-        const nextSectionIndices = allKeywords
-            .map(k => lower.indexOf(k, start + 20))
-            .filter(i => i !== -1);
+    // 1. Find the start index of each section
+    Object.entries(sectionKeywords).forEach(([key, keywords]) => {
+        const indices = keywords
+            .map(k => {
+                const regex = new RegExp(`\\b${k}\\b`, 'i');
+                const match = text.match(regex);
+                return match ? match.index : -1;
+            })
+            .filter(i => i !== undefined && i !== -1) as number[];
 
-        const end = nextSectionIndices.length > 0 ? Math.min(...nextSectionIndices) : text.length;
-        return text.slice(start, end).trim();
+        if (indices.length > 0) {
+            // We take the first occurrence of any keyword for this section
+            sectionPositions.push({
+                name: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize (contact -> Contact)
+                index: Math.min(...indices)
+            });
+        }
+    });
+
+    // 2. Sort sections by their position in the text
+    sectionPositions.sort((a, b) => a.index - b.index);
+
+    // 3. Helper to extract content based on sorted positions
+    const extractSection = (sectionName: string): string => {
+        const currentSection = sectionPositions.find(s => s.name.toLowerCase() === sectionName.toLowerCase());
+        if (!currentSection) return "";
+
+        const currentPosIndex = sectionPositions.findIndex(s => s.name === currentSection.name);
+        const nextSection = sectionPositions[currentPosIndex + 1];
+
+        const start = currentSection.index;
+        const end = nextSection ? nextSection.index : text.length;
+
+        // Remove the header itself (heuristic: remove first line or first 20 chars)
+        const rawContent = text.slice(start, end).trim();
+        const firstLineEnd = rawContent.indexOf('\n');
+        if (firstLineEnd !== -1 && firstLineEnd < 50) {
+            return rawContent.slice(firstLineEnd).trim();
+        }
+        return rawContent;
     };
 
     // 1. Contact
-    const contactContent = extractSection(sectionKeywords.contact);
+    const contactContent = extractSection("Contact");
     const contactIssues = [];
     const contactScope = contactContent || text.slice(0, 500);
 
@@ -121,7 +155,7 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
     });
 
     // 2. Experience
-    const expContent = extractSection(sectionKeywords.experience);
+    const expContent = extractSection("Experience");
     const expIssues = [];
     const expReplacements: TextReplacement[] = [];
 
@@ -164,7 +198,7 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
     });
 
     // 3. Education
-    const eduContent = extractSection(sectionKeywords.education);
+    const eduContent = extractSection("Education");
     const eduIssues = [];
     if (eduContent.length < 20) eduIssues.push("Education section seems too short or missing.");
     if (!eduContent.toLowerCase().match(/bachelor|master|phd|bs|ms|ba|ma|degree/)) eduIssues.push("Specify your degree type (e.g., Bachelor's, Master's).");
@@ -178,7 +212,7 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
     });
 
     // 4. Skills
-    const skillsContent = extractSection(sectionKeywords.skills);
+    const skillsContent = extractSection("Skills");
     const skillsIssues = [];
     const keywordTarget = 12;
     const skillsScore = Math.min(Math.round((found.length / keywordTarget) * 100), 100);
@@ -199,13 +233,59 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
         s.issues.forEach(issue => suggestions.push(`${s.name}: ${issue}`));
     });
 
-    return {
+    // 5. Skill Categorization & Role Prediction
+    const skillCategories: Record<string, string[]> = {
+        "Frontend": ["JavaScript", "TypeScript", "React", "Next.js", "HTML", "CSS", "Redux", "Vue", "Angular"],
+        "Backend": ["Node.js", "Python", "Java", "C++", "SQL", "Database", "API", "Express", "Django", "Spring"],
+        "DevOps": ["AWS", "Docker", "Kubernetes", "CI/CD", "Git", "Jenkins", "Terraform", "Azure"],
+        "Soft Skills": ["Communication", "Teamwork", "Problem Solving", "Leadership", "Agile"]
+    };
+
+    const skillDistribution: Record<string, number> = {
+        "Frontend": 0,
+        "Backend": 0,
+        "DevOps": 0,
+        "Soft Skills": 0
+    };
+
+    found.forEach(skill => {
+        for (const [category, skills] of Object.entries(skillCategories)) {
+            if (skills.includes(skill)) {
+                skillDistribution[category]++;
+            }
+        }
+    });
+
+    // Determine Role
+    let predictedRole = "General Software Engineer";
+    const maxScore = Math.max(...Object.values(skillDistribution));
+    if (maxScore > 0) {
+        const topCategory = Object.keys(skillDistribution).find(key => skillDistribution[key] === maxScore);
+        if (topCategory === "Frontend") predictedRole = "Frontend Developer";
+        else if (topCategory === "Backend") predictedRole = "Backend Developer";
+        else if (topCategory === "DevOps") predictedRole = "DevOps Engineer";
+        else if (skillDistribution["Frontend"] > 0 && skillDistribution["Backend"] > 0) predictedRole = "Full Stack Developer";
+    }
+
+    const result = {
         score: totalScore,
         keywords: { found, missing },
         formatting: { issues: formattingIssues, score: formattingScore },
         sections,
-        suggestions: suggestions.length > 0 ? suggestions : ["Great job! Your resume looks solid."]
+        suggestions: suggestions.length > 0 ? suggestions : ["Great job! Your resume looks solid."],
+        role: {
+            predicted: predictedRole,
+            distribution: skillDistribution
+        }
     };
+
+    console.log("--- Analysis Result ---");
+    console.log("Predicted Role:", result.role.predicted);
+    console.log("Skills Found:", result.keywords.found.join(", "));
+    console.log("Sections:", result.sections.map(s => `${s.name} (${s.score}%)`).join(", "));
+    console.log("-----------------------");
+
+    return result;
 }
 
 export interface JdAnalysisResult extends AnalysisResult {
