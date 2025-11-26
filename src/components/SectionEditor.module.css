@@ -2,16 +2,19 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    border-left: 1px solid hsl(var(--border));
     background: hsl(var(--card));
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border));
+    overflow: hidden;
 }
 
 .header {
-    padding: 1rem;
+    padding: 1rem 1.5rem;
     border-bottom: 1px solid hsl(var(--border));
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: hsl(var(--muted) / 0.3);
 }
 
 .title {
@@ -29,30 +32,36 @@
 .sectionItem {
     border: 1px solid hsl(var(--border));
     border-radius: var(--radius);
-    margin-bottom: 0.75rem;
-    overflow: hidden;
+    margin-bottom: 1rem;
     background: hsl(var(--background));
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.sectionItem:hover {
+    border-color: hsl(var(--primary) / 0.5);
 }
 
 .sectionHeader {
     width: 100%;
-    padding: 0.75rem 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 1rem;
     background: transparent;
     border: none;
     cursor: pointer;
+    text-align: left;
+    font-size: 0.95rem;
     color: hsl(var(--foreground));
-    transition: background 0.2s;
 }
 
 .sectionHeader:hover {
-    background: hsl(var(--muted));
+    background: hsl(var(--muted) / 0.5);
 }
 
 .sectionHeader.active {
-    background: hsl(var(--muted));
+    background: hsl(var(--muted) / 0.3);
     border-bottom: 1px solid hsl(var(--border));
 }
 
@@ -61,41 +70,147 @@
 }
 
 .issuesList {
-    background: hsl(var(--destructive) / 0.1);
-    border: 1px solid hsl(var(--destructive) / 0.2);
-    border-radius: var(--radius);
-    padding: 0.75rem;
     margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: hsl(var(--destructive) / 0.1);
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--destructive) / 0.2);
 }
 
 .issuesTitle {
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: hsl(var(--destructive));
     margin-bottom: 0.5rem;
 }
 
 .issueItem {
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     color: hsl(var(--destructive));
     margin-bottom: 0.25rem;
 }
 
-.editor {
-    width: 100%;
-    background: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-    border-radius: var(--radius);
-    padding: 0.75rem;
-    color: hsl(var(--foreground));
-    font-family: 'Inter', sans-serif;
+/* Editor with Highlights */
+.editorContainer {
+    position: relative;
+    min-height: 150px;
+    font-family: monospace;
     font-size: 0.9rem;
     line-height: 1.5;
+}
+
+.editor {
+    width: 100%;
+    padding: 0.75rem;
+    background: transparent;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    color: transparent;
+    /* Hide text color to show highlights underneath */
+    caret-color: hsl(var(--foreground));
+    /* Keep cursor visible */
     resize: vertical;
-    outline: none;
+    position: relative;
+    z-index: 2;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
 }
 
 .editor:focus {
+    outline: none;
     border-color: hsl(var(--primary));
-    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
+}
+
+.highlightLayer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.75rem;
+    /* Match editor padding */
+    pointer-events: none;
+    z-index: 1;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    color: hsl(var(--foreground));
+    border: 1px solid transparent;
+    /* Match editor border width */
+}
+
+.highlightOverlay {
+    width: 100%;
+    height: 100%;
+}
+
+.highlight {
+    background-color: hsl(var(--destructive) / 0.2);
+    border-bottom: 2px solid hsl(var(--destructive));
+    border-radius: 2px;
+}
+
+/* Replacements Panel */
+.replacementsPanel {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: hsl(var(--secondary) / 0.3);
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border));
+}
+
+.replacementsTitle {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: hsl(var(--foreground));
+}
+
+.replacementsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.replacementItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    background: hsl(var(--background));
+    padding: 0.5rem;
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border));
+}
+
+.repOriginal {
+    color: hsl(var(--destructive));
+    text-decoration: line-through;
+}
+
+.repArrow {
+    color: hsl(var(--muted-foreground));
+}
+
+.repNew {
+    color: hsl(var(--success));
+    font-weight: 600;
+}
+
+.applyButton {
+    margin-left: auto;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.applyButton:hover {
+    opacity: 0.9;
 }

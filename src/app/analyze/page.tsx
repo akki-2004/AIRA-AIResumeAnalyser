@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import { AnalysisResult, SectionAnalysis } from "@/lib/analyzer";
+import SmartSectionEditor from "@/components/SmartSectionEditor";
 import ResumeViewer from "@/components/ResumeViewer";
-import SectionEditor from "@/components/SectionEditor";
-import { CheckCircle, XCircle, AlertTriangle, ArrowLeft, Edit, Layout } from "lucide-react";
+import SkillsChart from "@/components/SkillsChart";
+import ParsingExplainer from "@/components/ParsingExplainer";
+import { CheckCircle, AlertTriangle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function AnalyzePage() {
@@ -13,6 +15,7 @@ export default function AnalyzePage() {
     const [loading, setLoading] = useState(true);
     const [fileUrl, setFileUrl] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<"analysis" | "editor">("analysis");
+    const [viewMode, setViewMode] = useState<"editor" | "pdf">("pdf");
 
     useEffect(() => {
         const storedResult = localStorage.getItem("analysisResult");
@@ -93,108 +96,117 @@ export default function AnalyzePage() {
 
     return (
         <div className={styles.splitLayout}>
-            {/* Left Panel: PDF Viewer */}
+            {/* Left Panel: Smart Section Editor or PDF */}
             <div className={styles.leftPanel}>
                 <div className={styles.panelHeader}>
-                    <h2 className={styles.panelTitle}>Original Resume</h2>
+                    <div className={styles.toggleContainer}>
+                        <button
+                            className={`${styles.toggleBtn} ${viewMode === "editor" ? styles.active : ""}`}
+                            onClick={() => setViewMode("editor")}
+                        >
+                            Smart Editor
+                        </button>
+                        <button
+                            className={`${styles.toggleBtn} ${viewMode === "pdf" ? styles.active : ""}`}
+                            onClick={() => setViewMode("pdf")}
+                        >
+                            Original PDF
+                        </button>
+                    </div>
                 </div>
                 <div className={styles.viewerContainer}>
-                    <ResumeViewer fileUrl={fileUrl} />
+                    {viewMode === "editor" ? (
+                        <SmartSectionEditor
+                            sections={result.sections || []}
+                            onSave={handleRescore}
+                        />
+                    ) : (
+                        <ResumeViewer fileUrl={fileUrl} />
+                    )}
                 </div>
             </div>
 
-            {/* Right Panel: Analysis & Editor */}
+            {/* Right Panel: Analysis Results */}
             <div className={styles.rightPanel}>
                 <div className={styles.panelHeader}>
-                    <div className={styles.tabs}>
-                        <button
-                            className={`${styles.tab} ${activeTab === "analysis" ? styles.activeTab : ""}`}
-                            onClick={() => setActiveTab("analysis")}
-                        >
-                            <Layout size={16} /> Analysis
-                        </button>
-                        <button
-                            className={`${styles.tab} ${activeTab === "editor" ? styles.activeTab : ""}`}
-                            onClick={() => setActiveTab("editor")}
-                        >
-                            <Edit size={16} /> Editor
-                        </button>
-                    </div>
+                    <h2 className={styles.panelTitle}>Analysis Results</h2>
                     <Link href="/" className={styles.backLink}>
                         <ArrowLeft size={16} /> Upload New
                     </Link>
                 </div>
 
                 <div className={styles.panelContent}>
-                    {activeTab === "analysis" ? (
-                        <div className={styles.analysisView}>
-                            <div className={styles.scoreCard}>
-                                <div className={styles.scoreCircle}>
-                                    <span className={styles.scoreValue}>{result.score}</span>
-                                    <span className={styles.scoreLabel}>Score</span>
-                                </div>
-                                <div className={styles.scoreInfo}>
-                                    <h3 className={styles.scoreTitle}>ATS Compatibility</h3>
-                                    <p className={styles.scoreDesc}>
-                                        {result.score >= 70 ? "Optimized" : "Needs Improvement"}
-                                    </p>
-                                </div>
+                    <div className={styles.analysisView}>
+                        <div className={styles.scoreCard}>
+                            <div className={styles.scoreCircle}>
+                                <span className={styles.scoreValue}>{result.score}</span>
+                                <span className={styles.scoreLabel}>Score</span>
                             </div>
-
-                            <div className={styles.sectionsGrid}>
-                                {result.sections?.map((section, i) => (
-                                    <div key={i} className={styles.sectionCard}>
-                                        <div className={styles.sectionHeader}>
-                                            <h4 className={styles.sectionTitle}>{section.name}</h4>
-                                            <span className={`${styles.badge} ${section.score >= 80 ? styles.success : styles.warning}`}>
-                                                {section.score}%
-                                            </span>
-                                        </div>
-                                        {section.issues.length > 0 ? (
-                                            <ul className={styles.issueList}>
-                                                {section.issues.map((issue, j) => (
-                                                    <li key={j} className={styles.issueItem}>
-                                                        <AlertTriangle size={14} /> {issue}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        ) : (
-                                            <p className={styles.noIssues}>
-                                                <CheckCircle size={14} /> No issues found
-                                            </p>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className={styles.generalIssues}>
-                                <h3 className={styles.generalTitle}>General Feedback</h3>
-                                <div className={styles.feedbackGroup}>
-                                    <h4>Missing Keywords</h4>
-                                    <div className={styles.tags}>
-                                        {result.keywords.missing.map((k, i) => (
-                                            <span key={i} className={styles.tagMissing}>{k}</span>
-                                        ))}
-                                        {result.keywords.missing.length === 0 && <span className={styles.tagSuccess}>All good!</span>}
-                                    </div>
-                                </div>
-                                <div className={styles.feedbackGroup}>
-                                    <h4>Formatting</h4>
-                                    <ul className={styles.issueList}>
-                                        {result.formatting.issues.map((issue, i) => (
-                                            <li key={i} className={styles.issueItem}><AlertTriangle size={14} /> {issue}</li>
-                                        ))}
-                                        {result.formatting.issues.length === 0 && <li className={styles.noIssues}><CheckCircle size={14} /> Perfect formatting!</li>}
-                                    </ul>
-                                </div>
+                            <div className={styles.scoreInfo}>
+                                <h3 className={styles.scoreTitle}>ATS Compatibility</h3>
+                                <p className={styles.scoreDesc}>
+                                    {result.score >= 70 ? "Optimized" : "Needs Improvement"}
+                                </p>
                             </div>
                         </div>
-                    ) : (
-                        <SectionEditor
-                            sections={result.sections || []}
-                            onSave={handleRescore}
-                        />
-                    )}
+
+                        {result.role && (
+                            <SkillsChart
+                                distribution={result.role.distribution}
+                                predictedRole={result.role.predicted}
+                            />
+                        )}
+
+                        <div className={styles.sectionsGrid}>
+                            {result.sections?.map((section, i) => (
+                                <div key={i} className={styles.sectionCard}>
+                                    <div className={styles.sectionHeader}>
+                                        <h4 className={styles.sectionTitle}>{section.name}</h4>
+                                        <span className={`${styles.badge} ${section.score >= 80 ? styles.success : styles.warning}`}>
+                                            {section.score}%
+                                        </span>
+                                    </div>
+                                    {section.issues.length > 0 ? (
+                                        <ul className={styles.issueList}>
+                                            {section.issues.map((issue, j) => (
+                                                <li key={j} className={styles.issueItem}>
+                                                    <AlertTriangle size={14} /> {issue}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className={styles.noIssues}>
+                                            <CheckCircle size={14} /> No issues found
+                                        </p>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className={styles.generalIssues}>
+                            <h3 className={styles.generalTitle}>General Feedback</h3>
+                            <div className={styles.feedbackGroup}>
+                                <h4>Missing Keywords</h4>
+                                <div className={styles.tags}>
+                                    {result.keywords.missing.map((k, i) => (
+                                        <span key={i} className={styles.tagMissing}>{k}</span>
+                                    ))}
+                                    {result.keywords.missing.length === 0 && <span className={styles.tagSuccess}>All good!</span>}
+                                </div>
+                            </div>
+                            <div className={styles.feedbackGroup}>
+                                <h4>Formatting</h4>
+                                <ul className={styles.issueList}>
+                                    {result.formatting.issues.map((issue, i) => (
+                                        <li key={i} className={styles.issueItem}><AlertTriangle size={14} /> {issue}</li>
+                                    ))}
+                                    {result.formatting.issues.length === 0 && <li className={styles.noIssues}><CheckCircle size={14} /> Perfect formatting!</li>}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <ParsingExplainer />
+                    </div>
                 </div>
             </div>
         </div>

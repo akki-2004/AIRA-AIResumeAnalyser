@@ -1,0 +1,92 @@
+.container {
+    margin-top: 2rem;
+    border-top: 1px solid hsl(var(--border));
+    padding-top: 1.5rem;
+}
+
+.toggleBtn {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    border: none;
+    color: hsl(var(--muted-foreground));
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--radius);
+    transition: all 0.2s;
+}
+
+.toggleBtn:hover {
+    background: hsl(var(--muted));
+    color: hsl(var(--foreground));
+}
+
+.btnContent {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+}
+
+.content {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+    background: hsl(var(--muted) / 0.3);
+    border-radius: var(--radius);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.step {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.iconBox {
+    background: hsl(var(--background));
+    padding: 0.6rem;
+    border-radius: 50%;
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.step h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: hsl(var(--foreground));
+}
+
+.step p {
+    font-size: 0.85rem;
+    color: hsl(var(--muted-foreground));
+    line-height: 1.5;
+}
+
+.step code {
+    background: hsl(var(--muted));
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.8em;
+}
