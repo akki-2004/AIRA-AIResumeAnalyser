@@ -85,11 +85,11 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
     // Section Parsing Logic
     const sections: SectionAnalysis[] = [];
     const sectionKeywords = {
-        contact: ["contact", "email", "phone", "address", "linkedin"],
-        experience: ["experience", "employment", "work history", "professional experience"],
-        education: ["education", "university", "college", "degree", "academic"],
-        skills: ["skills", "technologies", "competencies", "languages"],
-        projects: ["projects", "portfolio", "personal projects"]
+        contact: ["contact", "email", "phone", "address", "linkedin", "contact info", "contact information"],
+        experience: ["experience", "employment", "work history", "professional experience", "work experience", "career history", "employment history"],
+        education: ["education", "university", "college", "degree", "academic", "qualifications", "education & qualifications", "academic background"],
+        skills: ["skills", "technologies", "competencies", "languages", "technical skills", "core competencies", "skills & expertise", "technical proficiency", "software skills"],
+        projects: ["projects", "portfolio", "personal projects", "key projects", "academic projects", "relevant projects"]
     };
 
     // Robust Section Parsing Logic
@@ -99,7 +99,9 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
     Object.entries(sectionKeywords).forEach(([key, keywords]) => {
         const indices = keywords
             .map(k => {
-                const regex = new RegExp(`\\b${k}\\b`, 'i');
+                // Stricter Regex: Matches start of line or newline, followed by keyword, followed by colon or newline
+                // This prevents matching "I have experience in..."
+                const regex = new RegExp(`(?:^|\\n)\\s*${k}\\s*(?::|\\n|$)`, 'i');
                 const match = text.match(regex);
                 return match ? match.index : -1;
             })
@@ -138,7 +140,13 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
     };
 
     // 1. Contact
-    const contactContent = extractSection("Contact");
+    // If "Contact" header is found, extractSection handles it.
+    // If NOT found, we assume Contact is at the top, but we MUST stop before the first found section.
+    let contactContent = extractSection("Contact");
+    if (!contactContent) {
+        const firstSectionIndex = sectionPositions.length > 0 ? sectionPositions[0].index : 500;
+        contactContent = text.slice(0, firstSectionIndex).trim();
+    }
     const contactIssues = [];
     const contactScope = contactContent || text.slice(0, 500);
 
