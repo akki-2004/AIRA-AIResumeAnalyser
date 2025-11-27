@@ -7,7 +7,8 @@ import SmartSectionEditor from "@/components/SmartSectionEditor";
 import ResumeViewer from "@/components/ResumeViewer";
 import SkillsChart from "@/components/SkillsChart";
 import ParsingExplainer from "@/components/ParsingExplainer";
-import { CheckCircle, AlertTriangle, ArrowLeft } from "lucide-react";
+import { CheckCircle, AlertTriangle, ArrowLeft, FileText, Edit, Eye } from "lucide-react";
+import ResumePreview from "@/components/ResumePreview";
 import Link from "next/link";
 
 export default function AnalyzePage() {
@@ -15,7 +16,7 @@ export default function AnalyzePage() {
     const [loading, setLoading] = useState(true);
     const [fileUrl, setFileUrl] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<"analysis" | "editor">("analysis");
-    const [viewMode, setViewMode] = useState<"editor" | "pdf">("pdf");
+    const [viewMode, setViewMode] = useState<"editor" | "pdf" | "preview">("pdf");
 
     useEffect(() => {
         const storedResult = localStorage.getItem("analysisResult");
@@ -104,13 +105,19 @@ export default function AnalyzePage() {
                             className={`${styles.toggleBtn} ${viewMode === "editor" ? styles.active : ""}`}
                             onClick={() => setViewMode("editor")}
                         >
-                            Smart Editor
+                            <Edit size={14} /> Editor
+                        </button>
+                        <button
+                            className={`${styles.toggleBtn} ${viewMode === "preview" ? styles.active : ""}`}
+                            onClick={() => setViewMode("preview")}
+                        >
+                            <Eye size={14} /> Preview
                         </button>
                         <button
                             className={`${styles.toggleBtn} ${viewMode === "pdf" ? styles.active : ""}`}
                             onClick={() => setViewMode("pdf")}
                         >
-                            Original PDF
+                            <FileText size={14} /> Original
                         </button>
                     </div>
                 </div>
@@ -120,6 +127,8 @@ export default function AnalyzePage() {
                             sections={result.sections || []}
                             onSave={handleRescore}
                         />
+                    ) : viewMode === "preview" ? (
+                        <ResumePreview sections={result.sections || []} />
                     ) : (
                         <ResumeViewer fileUrl={fileUrl} />
                     )}
