@@ -29,7 +29,6 @@ export default function ResumePreview({ sections }: ResumePreviewProps) {
             </div>
 
             <div className={styles.previewPage} id="resume-preview">
-                {/* Header / Contact */}
                 {contact && (
                     <div className={styles.header}>
                         <div className={styles.contactInfo}>
@@ -42,7 +41,6 @@ export default function ResumePreview({ sections }: ResumePreviewProps) {
 
                 <hr className={styles.divider} />
 
-                {/* Experience */}
                 {experience && (
                     <div className={styles.section}>
                         <h3 className={styles.sectionTitle}>Experience</h3>
@@ -54,7 +52,6 @@ export default function ResumePreview({ sections }: ResumePreviewProps) {
                     </div>
                 )}
 
-                {/* Education */}
                 {education && (
                     <div className={styles.section}>
                         <h3 className={styles.sectionTitle}>Education</h3>
@@ -66,7 +63,6 @@ export default function ResumePreview({ sections }: ResumePreviewProps) {
                     </div>
                 )}
 
-                {/* Skills */}
                 {skills && (
                     <div className={styles.section}>
                         <h3 className={styles.sectionTitle}>Skills</h3>

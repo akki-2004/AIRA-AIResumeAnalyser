@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-// @ts-ignore
 const pdf = require("pdf-parse");
 import { analyzeResume } from "@/lib/analyzer";
 

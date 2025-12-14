@@ -35,14 +35,11 @@
     background: white;
     color: black;
     width: 210mm;
-    /* A4 width */
     min-height: 297mm;
-    /* A4 height */
     margin: 2rem auto;
     padding: 20mm;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     font-family: 'Times New Roman', Times, serif;
-    /* Classic resume font */
     font-size: 12pt;
     line-height: 1.4;
 }
@@ -77,14 +74,12 @@
 
 .content {
     white-space: pre-wrap;
-    /* Preserve newlines */
 }
 
 .line {
     margin: 0;
 }
 
-/* Print Styles */
 @media print {
     .toolbar {
         display: none;
@@ -102,7 +97,6 @@
         box-shadow: none;
     }
 
-    /* Hide other UI elements on the page */
     :global(body > *:not(#resume-preview-root)) {
         display: none;
     }

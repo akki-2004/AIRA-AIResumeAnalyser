@@ -41,7 +41,6 @@ export default function SmartSectionEditor({ sections, onSave }: SmartSectionEdi
         const newContent = section.content.replace(replacement.original, replacement.replacement);
         handleContentChange(sectionIndex, newContent);
 
-        // Optimistic update: remove the replacement from the list
         const newSections = [...editedSections];
         newSections[sectionIndex] = {
             ...newSections[sectionIndex],
@@ -114,7 +113,6 @@ export default function SmartSectionEditor({ sections, onSave }: SmartSectionEdi
 
                         {expandedSection === section.name && (
                             <div className={styles.sectionBody}>
-                                {/* Guidance Box */}
                                 <div className={styles.guidanceBox}>
                                     <div className={styles.guidanceHeader}>
                                         <Lightbulb size={14} />
@@ -136,7 +134,6 @@ export default function SmartSectionEditor({ sections, onSave }: SmartSectionEdi
                                     />
                                 </div>
 
-                                {/* Issues & Replacements */}
                                 {(section.issues.length > 0 || (section.replacements && section.replacements.length > 0)) && (
                                     <div className={styles.feedbackPanel}>
                                         {section.issues.map((issue, i) => (

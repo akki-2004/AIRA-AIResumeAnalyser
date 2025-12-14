@@ -40,7 +40,6 @@ export default function AnalyzePage() {
     const handleRescore = async (newSections: SectionAnalysis[]) => {
         setLoading(true);
 
-        // Reconstruct full text from sections
         const newText = newSections.map(s => `${s.name}\n${s.content}`).join("\n\n");
 
         try {
@@ -55,7 +54,7 @@ export default function AnalyzePage() {
             const newResult = await response.json();
             setResult(newResult);
             localStorage.setItem("analysisResult", JSON.stringify(newResult));
-            setActiveTab("analysis"); // Switch back to analysis view
+            setActiveTab("analysis");
         } catch (error) {
             console.error("Re-analysis error:", error);
             alert("Failed to re-analyze resume.");
@@ -97,7 +96,6 @@ export default function AnalyzePage() {
 
     return (
         <div className={styles.splitLayout}>
-            {/* Left Panel: Smart Section Editor or PDF */}
             <div className={styles.leftPanel}>
                 <div className={styles.panelHeader}>
                     <div className={styles.toggleContainer}>
@@ -135,7 +133,6 @@ export default function AnalyzePage() {
                 </div>
             </div>
 
-            {/* Right Panel: Analysis Results */}
             <div className={styles.rightPanel}>
                 <div className={styles.panelHeader}>
                     <h2 className={styles.panelTitle}>Analysis Results</h2>

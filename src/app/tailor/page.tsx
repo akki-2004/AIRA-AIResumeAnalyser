@@ -18,7 +18,6 @@ export default function TailorPage() {
 
     const handleFileUpload = (uploadedFile: File) => {
         setFile(uploadedFile);
-        // Create preview URL
         const reader = new FileReader();
         reader.onload = (e) => {
             setFileUrl(e.target?.result as string);
@@ -111,7 +110,6 @@ export default function TailorPage() {
                 </div>
             ) : (
                 <div className={styles.splitLayout}>
-                    {/* Left Panel: PDF Viewer */}
                     <div className={styles.leftPanel}>
                         <div className={styles.panelHeader}>
                             <h2 className={styles.panelTitle}>Your Resume</h2>
@@ -124,7 +122,6 @@ export default function TailorPage() {
                         </div>
                     </div>
 
-                    {/* Right Panel: Tailoring Results */}
                     <div className={styles.rightPanel}>
                         <div className={styles.panelHeader}>
                             <h2 className={styles.panelTitle}>Match Analysis</h2>

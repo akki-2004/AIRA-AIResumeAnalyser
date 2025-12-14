@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { analyzeWithJD } from "@/lib/analyzer";
 
-// @ts-ignore
 const pdf = require("pdf-parse");
 
 export async function POST(req: NextRequest) {

@@ -26,7 +26,6 @@ export default function FileUpload({ onFileUpload }: FileUploadProps) {
     const validateFile = (file: File) => {
         const validTypes = [
             "application/pdf",
-            // "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // TODO: Add DOCX support
         ];
         if (!validTypes.includes(file.type)) {
             setError("Please upload a PDF file. DOCX support coming soon.");

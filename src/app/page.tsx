@@ -13,7 +13,6 @@ export default function Home() {
       const formData = new FormData();
       formData.append("file", file);
 
-      // Show loading state (optional, could add a spinner here)
       console.log("Uploading file...");
 
       const response = await fetch("/api/analyze", {
@@ -28,7 +27,6 @@ export default function Home() {
 
       const data = await response.json();
 
-      // Convert file to base64 for preview
       const reader = new FileReader();
       reader.onload = (e) => {
         const base64 = e.target?.result as string;

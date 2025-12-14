@@ -33,7 +33,6 @@ export default function SectionEditor({ sections, onSave }: SectionEditorProps) 
         const newContent = section.content.replace(replacement.original, replacement.replacement);
         handleContentChange(sectionIndex, newContent);
 
-        // Remove the applied replacement from the list (optimistic update)
         const newSections = [...editedSections];
         newSections[sectionIndex] = {
             ...newSections[sectionIndex],
@@ -51,17 +50,13 @@ export default function SectionEditor({ sections, onSave }: SectionEditorProps) 
         const sortedReplacements = [...section.replacements].sort((a, b) => a.index - b.index);
 
         sortedReplacements.forEach((rep, i) => {
-            // Find the actual index in the current content (it might have shifted if multiple same words exist)
-            // This is a simple heuristic; for perfect accuracy, we'd need to track offsets dynamically
             const currentIndex = section.content.indexOf(rep.original, lastIndex);
             if (currentIndex === -1) return;
 
-            // Text before match
             if (currentIndex > lastIndex) {
                 elements.push(<span key={`text-${i}`}>{section.content.slice(lastIndex, currentIndex)}</span>);
             }
 
-            // Highlighted match
             elements.push(
                 <span key={`mark-${i}`} className={styles.highlight} title={`Suggest: ${rep.replacement}`}>
                     {rep.original}
@@ -71,7 +66,6 @@ export default function SectionEditor({ sections, onSave }: SectionEditorProps) 
             lastIndex = currentIndex + rep.original.length;
         });
 
-        // Remaining text
         if (lastIndex < section.content.length) {
             elements.push(<span key="text-end">{section.content.slice(lastIndex)}</span>);
         }

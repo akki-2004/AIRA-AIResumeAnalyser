@@ -96,7 +96,6 @@
     }
 }
 
-/* Split Layout (Reused from Analyze Page but scoped here) */
 .splitLayout {
     display: flex;
     height: 100vh;

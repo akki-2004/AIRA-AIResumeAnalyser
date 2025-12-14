@@ -35,7 +35,6 @@ export interface AnalysisResult {
 export async function analyzeResume(text: string): Promise<AnalysisResult> {
     const lowerText = text.toLowerCase();
 
-    // Common tech keywords with aliases for better matching
     const keywordMap: Record<string, string[]> = {
         "JavaScript": ["javascript", "js", "es6"],
         "TypeScript": ["typescript", "ts"],
@@ -73,7 +72,6 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
         }
     });
 
-    // Formatting Checks
     const formattingIssues: string[] = [];
     if (text.length < 200) formattingIssues.push("Resume content seems too short.");
     if (text.length > 5000) formattingIssues.push("Resume might be too long (over 2 pages).");
@@ -82,7 +80,6 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
 
     const formattingScore = Math.max(100 - (formattingIssues.length * 15), 0);
 
-    // Section Parsing Logic
     const sections: SectionAnalysis[] = [];
     const sectionKeywords = {
         contact: ["contact", "email", "phone", "address", "linkedin", "contact info", "contact information"],
@@ -92,15 +89,11 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
         projects: ["projects", "portfolio", "personal projects", "key projects", "academic projects", "relevant projects"]
     };
 
-    // Robust Section Parsing Logic
     const sectionPositions: { name: string; index: number }[] = [];
 
-    // 1. Find the start index of each section
     Object.entries(sectionKeywords).forEach(([key, keywords]) => {
         const indices = keywords
             .map(k => {
-                // Stricter Regex: Matches start of line or newline, followed by keyword, followed by colon or newline
-                // This prevents matching "I have experience in..."
                 const regex = new RegExp(`(?:^|\\n)\\s*${k}\\s*(?::|\\n|$)`, 'i');
                 const match = text.match(regex);
                 return match ? match.index : -1;
@@ -108,18 +101,15 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
             .filter(i => i !== undefined && i !== -1) as number[];
 
         if (indices.length > 0) {
-            // We take the first occurrence of any keyword for this section
             sectionPositions.push({
-                name: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize (contact -> Contact)
+                name: key.charAt(0).toUpperCase() + key.slice(1),
                 index: Math.min(...indices)
             });
         }
     });
 
-    // 2. Sort sections by their position in the text
     sectionPositions.sort((a, b) => a.index - b.index);
 
-    // 3. Helper to extract content based on sorted positions
     const extractSection = (sectionName: string): string => {
         const currentSection = sectionPositions.find(s => s.name.toLowerCase() === sectionName.toLowerCase());
         if (!currentSection) return "";
@@ -130,7 +120,6 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
         const start = currentSection.index;
         const end = nextSection ? nextSection.index : text.length;
 
-        // Remove the header itself (heuristic: remove first line or first 20 chars)
         const rawContent = text.slice(start, end).trim();
         const firstLineEnd = rawContent.indexOf('\n');
         if (firstLineEnd !== -1 && firstLineEnd < 50) {
@@ -139,9 +128,6 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
         return rawContent;
     };
 
-    // 1. Contact
-    // If "Contact" header is found, extractSection handles it.
-    // If NOT found, we assume Contact is at the top, but we MUST stop before the first found section.
     let contactContent = extractSection("Contact");
     if (!contactContent) {
         const firstSectionIndex = sectionPositions.length > 0 ? sectionPositions[0].index : 500;
@@ -162,7 +148,6 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
         replacements: []
     });
 
-    // 2. Experience
     const expContent = extractSection("Experience");
     const expIssues = [];
     const expReplacements: TextReplacement[] = [];
@@ -205,7 +190,6 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
         replacements: expReplacements
     });
 
-    // 3. Education
     const eduContent = extractSection("Education");
     const eduIssues = [];
     if (eduContent.length < 20) eduIssues.push("Education section seems too short or missing.");
@@ -219,7 +203,6 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
         replacements: []
     });
 
-    // 4. Skills
     const skillsContent = extractSection("Skills");
     const skillsIssues = [];
     const keywordTarget = 12;
@@ -241,7 +224,6 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
         s.issues.forEach(issue => suggestions.push(`${s.name}: ${issue}`));
     });
 
-    // 5. Skill Categorization & Role Prediction
     const skillCategories: Record<string, string[]> = {
         "Frontend": ["JavaScript", "TypeScript", "React", "Next.js", "HTML", "CSS", "Redux", "Vue", "Angular"],
         "Backend": ["Node.js", "Python", "Java", "C++", "SQL", "Database", "API", "Express", "Django", "Spring"],
@@ -264,7 +246,6 @@ export async function analyzeResume(text: string): Promise<AnalysisResult> {
         }
     });
 
-    // Determine Role
     let predictedRole = "General Software Engineer";
     const maxScore = Math.max(...Object.values(skillDistribution));
     if (maxScore > 0) {

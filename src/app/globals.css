@@ -1,5 +1,4 @@
 :root {
-  /* Premium Dark Theme Palette */
   --background: 222 47% 11%;
   --foreground: 210 40% 98%;
 
@@ -9,7 +8,7 @@
   --popover: 222 47% 11%;
   --popover-foreground: 210 40% 98%;
 
-  --primary: 252 59% 50%; /* Vibrant Purple */
+  --primary: 252 59% 50%;
   --primary-foreground: 210 40% 98%;
 
   --secondary: 217 19% 27%;
@@ -18,7 +17,7 @@
   --muted: 217 19% 27%;
   --muted-foreground: 215 20% 65%;
 
-  --accent: 175 84% 32%; /* Teal */
+  --accent: 175 84% 32%;
   --accent-foreground: 210 40% 98%;
 
   --destructive: 0 62% 30%;
@@ -46,7 +45,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 700;
   letter-spacing: -0.025em;
   margin-top: 0;
@@ -56,7 +60,6 @@ button {
   cursor: pointer;
 }
 
-/* Utility Classes for Layout */
 .container {
   width: 100%;
   max-width: 1200px;
@@ -64,19 +67,46 @@ button {
   padding: 0 1.5rem;
 }
 
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.items-center { align-items: center; }
-.justify-center { justify-content: center; }
-.justify-between { justify-content: space-between; }
-.gap-4 { gap: 1rem; }
-.gap-8 { gap: 2rem; }
+.flex {
+  display: flex;
+}
 
-.text-center { text-align: center; }
-.w-full { width: 100%; }
-.h-screen { height: 100vh; }
+.flex-col {
+  flex-direction: column;
+}
 
-/* Premium Button Styles */
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.gap-8 {
+  gap: 2rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -111,7 +141,6 @@ button {
   background-color: hsl(var(--secondary));
 }
 
-/* Glassmorphism Card */
 .card {
   background: hsl(var(--card) / 0.6);
   backdrop-filter: blur(12px);
